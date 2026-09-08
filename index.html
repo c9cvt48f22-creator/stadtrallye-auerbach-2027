@@ -12,107 +12,149 @@
     </div>
 
     <script>
-        // Alle 10 Stationen mit echten Rätseln und Lösungen
-        const STATIONS = [
-            {
-                id: "station-01",
-                name: "Station 1 – Rathaus",
-                description: "Betrachtet das Stadtwappen und benennt die drei Pflicht-Berge des Auerbacher Stadtwappens.",
-                taskType: "INPUT",
-                solution: "gottvaterberg", // Vereinfacht als Prüfwort
-                hint: "Denkt an die drei historischen Berge: Gottvaterberg, Grünberg, Pinzigberg.",
-                points: 10
+        /* =========================================================================
+         * 🗄️ ZENTRALE DATENBANK & TEXTVERWALTUNG
+         * Hier kannst du alle Texte, Bilder, Aufgaben, Hinweise und Lösungen anpassen!
+         * ========================================================================= */
+        const GAME_DATABASE = {
+            settings: {
+                pointsLostPerHint: 2, // Punkteabzug pro genutztem Hinweis
+                defaultPoints: 10
             },
-            {
-                id: "station-02",
-                name: "Station 2 – Bergleute",
-                description: "Die Grubenlampe flackert! Löst das Rätsel vor Ort und gebt den korrekten Zahlencode ein, um das Licht zu aktivieren.",
-                taskType: "INPUT",
-                solution: "1488",
-                hint: "Schaut auf die Inschrift oder die historischen Jahreszahlen im Bergbau.",
-                points: 10
-            },
-            {
-                id: "station-03",
-                name: "Station 3 – Jahreszahlen",
-                description: "Bringt die 5 historischen Ereignisse (Stadtgründung, Marktrecht etc.) in die exakte chronologische Reihenfolge (ältestes Jahr zuerst als Code, z.B. vier Jahreszahlen hintereinander).",
-                taskType: "INPUT",
-                solution: "1144", // Beispiel-Jahreszahl
-                hint: "Die Ereignisse liegen extrem nah beieinander – schaut genau hin!",
-                points: 10
-            },
-            {
-                id: "station-04",
-                name: "Station 4 – Goldener Löwe",
-                description: "Wer saß an welchem Tisch im alten Hotel? Löst das 4×4-Gästebuch-Logikrätsel. Welcher Gast saß auf Platz 1? (Gib den Beruf ein).",
-                taskType: "INPUT",
-                solution: "bergmann",
-                hint: "Lest die Aussagen der Gäste genau durch: Wer saß nicht neben wem?",
-                points: 15
-            },
-            {
-                id: "station-05",
-                name: "Station 5 – Heinrich Stromer",
-                description: "Dr. Heinrich Stromer (Dr. Auerbach) hat den Auerbachs Keller begründet. Welcher historische Fehler hat sich in seine Lebens-Story eingeschlichen? (Gib das Lösungswort ein).",
-                taskType: "INPUT",
-                solution: "leipzig",
-                hint: "Denkt an seine berühmte Station in Sachsen.",
-                points: 10
-            },
-            {
-                id: "station-06",
-                name: "Station 6 – Auerochse",
-                description: "Unser Wappentier! Löst das Rätsel rund um den Auerochsen von Auerbach.",
-                taskType: "INPUT",
-                solution: "auerochse",
-                hint: "Wie heißt das mächtige Wildrind im Wappen?",
-                points: 10
-            },
-            {
-                id: "station-07",
-                name: "Station 7 – Bücherei",
-                description: "Buchstabensalat! Findet die versteckten Auerbacher Begriffe wie AUEROCHSE, BERGWERK, RATHAUS, LÖWE. Welches Tier stand am Anfang des Salats?",
-                taskType: "INPUT",
-                solution: "auerochse",
-                hint: "Sucht nach den im Text genannten Groß-Wörtern.",
-                points: 10
-            },
-            {
-                id: "station-08",
-                name: "Station 8 – Kirche & Eisenerzaltar",
-                description: "Cäsar-Geheimschrift! Der Eisenerzaltar hat eine verschlüsselte Inschrift. Welcher weltberühmte Ort wird genannt?",
-                taskType: "INPUT",
-                solution: "newyork",
-                hint: "Auerbach teilt sich diesen einzigartigen Altar mit einer Metropole in Amerika.",
-                points: 15
-            },
-            {
-                id: "station-09",
-                name: "Station 9 – Goldener Brunnen",
-                description: "Morse-Code am Brunnen bei Eis und Co.! Entschlüsselt die Nachricht.",
-                taskType: "INPUT",
-                solution: "brunnen",
-                hint: "Was sprudelt hier unten an der Eisdiele?",
-                points: 15
-            },
-            {
-                id: "station-10",
-                name: "Station 10 – Finale",
-                description: "Das große Finale! Entschlüsselt die Botschaft aus der Vergangenheit: Nichts ging damals alleine – wer muss heute beim Bürgerfest 2027 zusammenhelfen? (Schreibe: alle)",
-                taskType: "INPUT",
-                solution: "alle",
-                hint: "Keiner schafft es als Einzelkämpfer – das Team gewinnt!",
-                points: 0
-            }
-        ];
+            stations: [
+                {
+                    id: "station-01",
+                    name: "Station 1 – Rathaus & Wappen",
+                    type: "PUZZLE_AND_TRIPLE_INPUT",
+                    description: "Betrachtet das Auerbacher Stadtwappen. Setzt es im Kopf aus 12 Teilen zusammen und benennt anschließend die drei historischen Berge, auf denen der Auerochse steht!",
+                    // Hier ist das offizielle Wappen direkt in der Datenbank hinterlegt:
+                    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/4/4e/Wappen_von_Auerbach_in_der_Oberpfalz.png",
+                    solutions: ["grünberg", "gottvaterberg", "pinzigberg"], // Alle 3 Berge
+                    hints: [
+                        "Hinweis 1: Die Namen der drei Berge beginnen mit den Buchstaben G, G und P.",
+                        "Hinweis 2: Einer der Berge hat einen göttlichen Namen, einer ist grün und der dritte heißt Pinzig..."
+                    ],
+                    points: 15
+                },
+                {
+                    id: "station-02",
+                    name: "Station 2 – Bergleute",
+                    type: "SINGLE_INPUT",
+                    description: "Die Grubenlampe flackert! Löst das Rätsel vor Ort und gebt den korrekten Zahlencode ein, um das Licht wieder zu aktivieren.",
+                    solution: "1488",
+                    hints: [
+                        "Hinweis 1: Sucht nach einer historischen Jahreszahl im Bereich des Bergbaus.",
+                        "Hinweis 2: Es ist das Jahr, in dem wichtige Bergrechte verliehen wurden."
+                    ],
+                    points: 10
+                },
+                {
+                    id: "station-03",
+                    name: "Station 3 – Jahreszahlen",
+                    type: "SINGLE_INPUT",
+                    description: "Bringt die historischen Ereignisse aus Auerbachs Geschichte in die exakte chronologische Reihenfolge (ältestes Datum zuerst).",
+                    solution: "1144",
+                    hints: [
+                        "Hinweis 1: Schaut euch die Jahreszahlen der alten Stadtrechte an.",
+                        "Hinweis 2: Die Jahreszahl liegt im 12. Jahrhundert."
+                    ],
+                    points: 10
+                },
+                {
+                    id: "station-04",
+                    name: "Station 4 – Goldener Löwe",
+                    type: "SINGLE_INPUT",
+                    description: "Wer saß an welchem Tisch im alten Hotel? Löst das 4×4-Gästebuch-Logikrätsel. Welcher Gast saß auf Platz 1? (Gib den Beruf ein).",
+                    solution: "bergmann",
+                    hints: [
+                        "Hinweis 1: Der gesuchte Gast arbeitet unter Tage.",
+                        "Hinweis 2: Er hat auf jeden Fall keinen Karren gelenkt."
+                    ],
+                    points: 15
+                },
+                {
+                    id: "station-05",
+                    name: "Station 5 – Heinrich Stromer",
+                    type: "SINGLE_INPUT",
+                    description: "Dr. Heinrich Stromer (Dr. Auerbach) begründete den berühmten Keller. Welcher Ort bzw. Stadt ist der Schlüssel zu seinem Erfolg?",
+                    solution: "leipzig",
+                    hints: [
+                        "Hinweis 1: Es ist eine berühmte Universitätsstadt in Sachsen.",
+                        "Hinweis 2: Dort steht auch der weltbekannte 'Auerbachs Keller'."
+                    ],
+                    points: 10
+                },
+                {
+                    id: "station-06",
+                    name: "Station 6 – Auerochse",
+                    type: "SINGLE_INPUT",
+                    description: "Unser stolzes Wappentier! Löst die Aufgabe rund um den Auerochsen von Auerbach.",
+                    solution: "auerochse",
+                    hints: [
+                        "Hinweis 1: Es ist ein ausgestorbenes, wildes Rind.",
+                        "Hinweis 2: Das Wort steckt bereits im Namen unseres Suchspiels."
+                    ],
+                    points: 10
+                },
+                {
+                    id: "station-07",
+                    name: "Station 7 – Bücherei",
+                    type: "SINGLE_INPUT",
+                    description: "Buchstabensalat! Welches der gesuchten Groß-Wörter zum Thema Auerbach stand ganz oben im Rätsel?",
+                    solution: "auerochse",
+                    hints: [
+                        "Hinweis 1: Es ist genau dasselbe mächtige Tier wie aus Station 6.",
+                        "Hinweis 2: Es beginnt mit dem Buchstaben A."
+                    ],
+                    points: 10
+                },
+                {
+                    id: "station-08",
+                    name: "Station 8 – Kirche & Eisenerzaltar",
+                    type: "SINGLE_INPUT",
+                    description: "Cäsar-Geheimschrift! Welcher weltberühmte Ort in Amerika teilt sich mit Auerbach den einzigen Eisenerzaltar der Welt?",
+                    solution: "newyork",
+                    hints: [
+                        "Hinweis 1: Die Stadt schläft nie und liegt an der US-Ostküste.",
+                        "Hinweis 2: Das gesuchte Wort besteht aus zwei englischen Begriffen zusammengeschrieben."
+                    ],
+                    points: 15
+                },
+                {
+                    id: "station-09",
+                    name: "Station 9 – Goldener Brunnen",
+                    type: "SINGLE_INPUT",
+                    description: "Morse-Code am Brunnen bei Eis und Co.! Entschlüsselt das dort versteckte Lösungswort.",
+                    solution: "brunnen",
+                    hints: [
+                        "Hinweis 1: Es sprudelt aus Stein und steht direkt vor eurer Nase.",
+                        "Hinweis 2: Es passt perfekt zum Namen 'Goldener ...'."
+                    ],
+                    points: 15
+                },
+                {
+                    id: "station-10",
+                    name: "Station 10 – Finale",
+                    type: "SINGLE_INPUT",
+                    description: "Das große Finale! Wer muss damals wie heute beim Bürgerfest 2027 zusammenhelfen, damit alles gelingt? (Ein kurzes Wort).",
+                    solution: "alle",
+                    hints: [
+                        "Hinweis 1: Niemand schafft es als Einzelkämpfer.",
+                        "Hinweis 2: Das Wort bedeutet: wirklich ausnahmslos jede Gruppe und Person."
+                    ],
+                    points: 0
+                }
+            ],
+            routes: [
+                ["station-01", "station-03", "station-02", "station-05", "station-04", "station-07", "station-06", "station-09", "station-08", "station-10"],
+                ["station-02", "station-04", "station-01", "station-06", "station-03", "station-08", "station-07", "station-01", "station-05", "station-10"],
+                ["station-03", "station-01", "station-05", "station-04", "station-02", "station-06", "station-09", "station-08", "station-07", "station-10"]
+            ]
+        };
 
-        const ROUTES = [
-            ["station-01", "station-03", "station-02", "station-05", "station-04", "station-07", "station-06", "station-09", "station-08", "station-10"],
-            ["station-02", "station-04", "station-01", "station-06", "station-03", "station-08", "station-07", "station-01", "station-05", "station-10"],
-            ["station-03", "station-01", "station-05", "station-04", "station-02", "station-06", "station-09", "station-08", "station-07", "station-10"],
-            ["station-04", "station-02", "station-06", "station-03", "station-01", "station-05", "station-08", "station-07", "station-09", "station-10"]
-        ];
-
+        /* =========================================================================
+         * ⚙️ SPIellogik & STEUERUNG
+         * ========================================================================= */
         class RallyApp {
             constructor() {
                 this.loadState();
@@ -131,7 +173,9 @@
                         points: 0,
                         status: "NOT_STARTED",
                         notes: "",
-                        isPaused: false
+                        isPaused: false,
+                        hintsUsedForCurrentStation: 0,
+                        puzzleSolved: false
                     };
                 }
             }
@@ -143,7 +187,7 @@
             registerTeam(teamName, memberNamesString) {
                 if (!teamName || teamName.trim() === "") return false;
                 const members = memberNamesString ? memberNamesString.split(',').map(n => n.trim()).filter(n => n.length > 0) : [];
-                const randomRoute = ROUTES[Math.floor(Math.random() * ROUTES.length)];
+                const randomRoute = GAME_DATABASE.routes[Math.floor(Math.random() * GAME_DATABASE.routes.length)];
 
                 this.state.teamName = teamName.trim();
                 this.state.memberNames = members;
@@ -151,6 +195,8 @@
                 this.state.currentStationIndex = 0;
                 this.state.status = "ACTIVE";
                 this.state.points = 0;
+                this.state.hintsUsedForCurrentStation = 0;
+                this.state.puzzleSolved = false;
                 this.saveState();
                 return true;
             }
@@ -159,21 +205,55 @@
                 if (this.state.isPaused) return null;
                 if (this.state.currentStationIndex >= this.state.routeStations.length) return null;
                 const sId = this.state.routeStations[this.state.currentStationIndex];
-                return STATIONS.find(s => s.id === sId);
+                return GAME_DATABASE.stations.find(s => s.id === sId);
             }
 
-            checkAnswer(inputVal) {
+            useHint() {
+                const current = this.getCurrentStation();
+                if (!current) return;
+                if (this.state.hintsUsedForCurrentStation < current.hints.length) {
+                    this.state.hintsUsedForCurrentStation++;
+                    this.state.points = Math.max(0, this.state.points - GAME_DATABASE.settings.pointsLostPerHint);
+                    this.saveState();
+                }
+            }
+
+            skipStation() {
+                this.state.currentStationIndex++;
+                this.state.hintsUsedForCurrentStation = 0;
+                this.state.puzzleSolved = false;
+                this.saveState();
+            }
+
+            checkAnswer(answers) {
                 const current = this.getCurrentStation();
                 if (!current) return false;
 
-                const cleanInput = inputVal.toLowerCase().trim();
-                if (cleanInput === current.solution.toLowerCase()) {
-                    this.state.points += current.points || 10;
-                    this.state.currentStationIndex++;
-                    this.saveState();
-                    return true;
+                if (current.type === "PUZZLE_AND_TRIPLE_INPUT") {
+                    const match0 = answers[0].toLowerCase().trim() === current.solutions[0];
+                    const match1 = answers[1].toLowerCase().trim() === current.solutions[1];
+                    const match2 = answers[2].toLowerCase().trim() === current.solutions[2];
+
+                    if (match0 && match1 && match2) {
+                        this.state.points += current.points;
+                        this.state.currentStationIndex++;
+                        this.state.hintsUsedForCurrentStation = 0;
+                        this.state.puzzleSolved = false;
+                        this.saveState();
+                        return true;
+                    }
+                    return false;
+                } else {
+                    const cleanInput = answers[0].toLowerCase().trim();
+                    if (cleanInput === current.solution.toLowerCase()) {
+                        this.state.points += current.points;
+                        this.state.currentStationIndex++;
+                        this.state.hintsUsedForCurrentStation = 0;
+                        this.saveState();
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
             }
 
             pause() { this.state.isPaused = true; this.saveState(); }
@@ -225,7 +305,6 @@
             } else {
                 const current = app.getCurrentStation();
                 
-                // Wenn das Finale erreicht ist: Zeige Übersicht mit Vornamen für die Siegerehrung!
                 if (!current) {
                     const membersList = app.state.memberNames.length > 0 ? app.state.memberNames.join(', ') : 'Keine Mitglieder angegeben';
                     container.innerHTML = `
@@ -248,6 +327,59 @@
                     return;
                 }
 
+                let hintsHtml = "";
+                if (app.state.hintsUsedForCurrentStation > 0) {
+                    hintsHtml += `<div style="background: #fff3cd; border: 1px solid #ffeeba; padding: 12px; border-radius: 6px; margin-bottom: 15px;">`;
+                    for (let i = 0; i < app.state.hintsUsedForCurrentStation; i++) {
+                        hintsHtml += `<p style="margin: 4px 0; color: #856404; font-size: 14px;">💡 <strong>${current.hints[i]}</strong></p>`;
+                    }
+                    hintsHtml += `</div>`;
+                }
+
+                // Bild anzeigen, falls in der Station definiert
+                let imageHtml = "";
+                if (current.imageUrl) {
+                    imageHtml = `
+                        <div style="text-align: center; margin: 15px 0;">
+                            <img src="${current.imageUrl}" alt="Stadtwappen" style="max-width: 150px; height: auto; border: 1px solid #dee2e6; border-radius: 8px; padding: 5px; background: white;">
+                        </div>
+                    `;
+                }
+
+                let taskBodyHtml = "";
+                if (current.type === "PUZZLE_AND_TRIPLE_INPUT" && !app.state.puzzleSolved) {
+                    taskBodyHtml = `
+                        <div style="background: #e2f0cb; padding: 20px; border-radius: 8px; border: 1px solid #b5d56c; text-align: center; margin-bottom: 20px;">
+                            <h4 style="margin-top: 0; color: #386641;">🧩 12-Teile Stadtwappen-Puzzle</h4>
+                            <p style="font-size: 14px; color: #3a5a40;">Setzt die 12 Puzzleteile im Kopf zusammen. Wenn das Wappen komplett ist, klickt hier:</p>
+                            <button id="solve-puzzle-btn" style="background: #386641; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer;">Puzzle gelöst! Weiter zu den Bergen ✅</button>
+                        </div>
+                    `;
+                } else if (current.type === "PUZZLE_AND_TRIPLE_INPUT" && app.state.puzzleSolved) {
+                    taskBodyHtml = `
+                        <div style="margin-bottom: 15px;">
+                            <p style="font-weight: bold; color: #386641; margin-bottom: 8px;">Benennt die 3 historischen Berge auf dem Wappen:</p>
+                            <input type="text" id="ans-0" placeholder="1. Berg (Grün...)" style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 6px; margin-bottom: 8px; box-sizing: border-box;">
+                            <input type="text" id="ans-1" placeholder="2. Berg (Gottvater...)" style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 6px; margin-bottom: 8px; box-sizing: border-box;">
+                            <input type="text" id="ans-2" placeholder="3. Berg (Pinzig...)" style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 6px; margin-bottom: 15px; box-sizing: border-box;">
+                            <button id="submit-answer" style="background: #2a9d8f; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px;">Antworten prüfen ✅</button>
+                        </div>
+                    `;
+                } else {
+                    taskBodyHtml = `
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; font-weight: bold; margin-bottom: 8px; color: #1b4332;">Eure Lösung eingeben:</label>
+                            <input type="text" id="ans-0" placeholder="Lösungswort oder Code..." style="width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 8px; font-size: 16px; box-sizing: border-box; margin-bottom: 12px;">
+                            <button id="submit-answer" style="background: #2a9d8f; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px;">Lösung prüfen ✅</button>
+                        </div>
+                    `;
+                }
+
+                let hintButtonHtml = "";
+                if (app.state.hintsUsedForCurrentStation < current.hints.length) {
+                    hintButtonHtml = `<button id="hint-btn" style="background: #e9c46a; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;">💡 Hinweis (-${GAME_DATABASE.settings.pointsLostPerHint} Pkt)</button>`;
+                }
+
                 container.innerHTML = `
                     <div style="padding: 15px 20px; background: #1b4332; color: white; display: flex; justify-content: space-between; align-items: center;">
                         <div><strong>Team:</strong> ${app.state.teamName}</div>
@@ -259,11 +391,17 @@
                         <h3 style="margin-top: 10px; font-size: 20px; color: #2d6a4f;">${current.name}</h3>
                         <p style="color: #495057; line-height: 1.5; font-size: 16px;">${current.description}</p>
                         
+                        ${imageHtml}
+                        ${hintsHtml}
+
                         <div style="margin-top: 25px; background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6;">
-                            <label style="display: block; font-weight: bold; margin-bottom: 8px; color: #1b4332;">Eure Lösung eingeben:</label>
-                            <input type="text" id="answer-input" placeholder="Lösungswort oder Code..." style="width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 8px; font-size: 16px; box-sizing: border-box; margin-bottom: 12px;">
-                            <button id="submit-answer" style="background: #2a9d8f; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px;">Lösung prüfen ✅</button>
+                            ${taskBodyHtml}
                             <p id="error-msg" style="color: #e63946; font-size: 14px; margin-top: 10px; display: none;"></p>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
+                            ${hintButtonHtml}
+                            <button id="skip-btn" style="background: #e76f51; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;">⏭️ Station überspringen (0 Pkt)</button>
                         </div>
                     </div>
 
@@ -272,6 +410,27 @@
                         <button id="notes-btn" style="background: #6c757d; color: white; border: none; padding: 10px 16px; border-radius: 6px; font-weight: bold; cursor: pointer;">📝 Notizen</button>
                     </div>
                 `;
+
+                const solvePuzzleBtn = document.getElementById('solve-puzzle-btn');
+                if (solvePuzzleBtn) {
+                    solvePuzzleBtn.onclick = () => {
+                        app.state.puzzleSolved = true;
+                        app.saveState();
+                        render();
+                    };
+                }
+
+                const hBtn = document.getElementById('hint-btn');
+                if (hBtn) {
+                    hBtn.onclick = () => { app.useHint(); render(); };
+                }
+
+                document.getElementById('skip-btn').onclick = () => {
+                    if (confirm("Wollt ihr diese Station wirklich überspringen? Ihr erhaltet dafür keine Punkte.")) {
+                        app.skipStation();
+                        render();
+                    }
+                };
 
                 document.getElementById('pause-btn').onclick = () => { app.pause(); render(); };
                 
@@ -290,17 +449,30 @@
                     document.getElementById('cancel-n').onclick = () => { render(); };
                 };
 
-                document.getElementById('submit-answer').onclick = () => {
-                    const val = document.getElementById('answer-input').value;
-                    const success = app.checkAnswer(val);
-                    if (success) {
-                        render();
-                    } else {
-                        const err = document.getElementById('error-msg');
-                        err.style.display = 'block';
-                        err.textContent = "Leider falsch! Tipp: " + current.hint;
-                    }
-                };
+                const submitBtn = document.getElementById('submit-answer');
+                if (submitBtn) {
+                    submitBtn.onclick = () => {
+                        let answers = [];
+                        if (current.type === "PUZZLE_AND_TRIPLE_INPUT") {
+                            answers = [
+                                document.getElementById('ans-0').value,
+                                document.getElementById('ans-1').value,
+                                document.getElementById('ans-2').value
+                            ];
+                        } else {
+                            answers = [document.getElementById('ans-0').value];
+                        }
+
+                        const success = app.checkAnswer(answers);
+                        if (success) {
+                            render();
+                        } else {
+                            const err = document.getElementById('error-msg');
+                            err.style.display = 'block';
+                            err.textContent = "Leider nicht ganz richtig! Nutzt bei Bedarf einen Hinweis.";
+                        }
+                    };
+                }
             }
         }
 
