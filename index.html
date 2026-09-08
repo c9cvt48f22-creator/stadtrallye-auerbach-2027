@@ -8,64 +8,136 @@
 <body style="font-family: Arial, sans-serif; background-color: #f4f6f8; margin: 0; padding: 0;">
 
     <div id="app" style="max-width: 600px; margin: 0 auto; background: white; min-height: 100vh; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
-        <!-- Dynamischer Inhalt -->
+        <!-- App lädt -->
     </div>
 
-    <script type="module">
-        import { app } from './js/app.js';
-        import { GAME_CONFIG } from './data/config.js';
+    <script>
+        // Komplettes Spielsystem direkt hier integriert (ohne externe Modul-Fehler)
+        const STATIONS = [
+            { id: "station-01", name: "Station 1 – Rathaus", description: "Betrachtet das Stadtwappen und benennt die drei Pflicht-Berge des Auerbacher Stadtwappens.", points: 10 },
+            { id: "station-02", name: "Station 2 – Bergleute", description: "Die Grubenlampe flackert! Löst das Rätsel vor Ort und gebt den korrekten Zahlencode ein.", points: 10 },
+            { id: "station-03", name: "Station 3 – Jahreszahlen", description: "Bringt die historischen Ereignisse in die exakte chronologische Reihenfolge.", points: 10 },
+            { id: "station-04", name: "Station 4 – Goldener Löwe", description: "Wer saß an welchem Tisch und hat was bestellt? Löst das 4×4-Logikrätsel.", points: 15 },
+            { id: "station-05", name: "Station 5 – Heinrich Stromer", description: "Findet den historischen Fehler in Stromers Lebensgeschichte heraus.", points: 10 },
+            { id: "station-06", name: "Station 6 – Auerochse", description: "Löst die Aufgabe rund um das Wappentier und die Geschichte des Auerochsen.", points: 10 },
+            { id: "station-07", name: "Station 7 – Bücherei", description: "Findet alle versteckten Auerbacher Begriffe (AUEROCHSE, BERGWERK, RATHAUS, LÖWE) im Buchstabensalat.", points: 10 },
+            { id: "station-08", name: "Station 8 – Kirche & Eisenerzaltar", description: "Nutzt das Cäsar-Alphabet, um die verschlüsselte Inschrift zu entschlüsseln.", points: 15 },
+            { id: "station-09", name: "Station 9 – Goldener Brunnen", description: "Entschlüsselt die Morse-Nachricht, die am Brunnen hinterlegt ist.", points: 15 },
+            { id: "station-10", name: "Station 10 – Finale", description: "Das große Finale: Die Botschaft der Vergangenheit entschlüsseln.", points: 0 }
+        ];
 
-        const appContainer = document.getElementById('app');
+        const ROUTES = [
+            ["station-01", "station-03", "station-02", "station-05", "station-04", "station-07", "station-06", "station-09", "station-08", "station-10"],
+            ["station-02", "station-04", "station-01", "station-06", "station-03", "station-08", "station-07", "station-01", "station-05", "station-10"],
+            ["station-03", "station-01", "station-05", "station-04", "station-02", "station-06", "station-09", "station-08", "station-07", "station-10"]
+        ];
+
+        class RallyApp {
+            constructor() {
+                this.loadState();
+            }
+
+            loadState() {
+                const saved = localStorage.getItem('rallye_team_state');
+                if (saved) {
+                    this.state = JSON.parse(saved);
+                } else {
+                    this.state = {
+                        teamName: null,
+                        memberNames: [],
+                        routeStations: [],
+                        currentStationIndex: 0,
+                        points: 0,
+                        status: "NOT_STARTED",
+                        notes: "",
+                        isPaused: false
+                    };
+                }
+            }
+
+            saveState() {
+                localStorage.setItem('rallye_team_state', JSON.stringify(this.state));
+            }
+
+            registerTeam(teamName, memberNamesString) {
+                if (!teamName || teamName.trim() === "") return false;
+                const members = memberNamesString ? memberNamesString.split(',').map(n => n.trim()).filter(n => n.length > 0) : [];
+                const randomRoute = ROUTES[Math.floor(Math.random() * ROUTES.length)];
+
+                this.state.teamName = teamName.trim();
+                this.state.memberNames = members;
+                this.state.routeStations = randomRoute;
+                this.state.currentStationIndex = 0;
+                this.state.status = "ACTIVE";
+                this.state.points = 0;
+                this.saveState();
+                return true;
+            }
+
+            getCurrentStation() {
+                if (this.state.isPaused) return null;
+                if (this.state.currentStationIndex >= this.state.routeStations.length) return null;
+                const sId = this.state.routeStations[this.state.currentStationIndex];
+                return STATIONS.find(s => s.id === sId);
+            }
+
+            completeStation() {
+                const current = this.getCurrentStation();
+                if (current) {
+                    this.state.points += current.points || 10;
+                    this.state.currentStationIndex++;
+                    this.saveState();
+                }
+            }
+
+            pause() { this.state.isPaused = true; this.saveState(); }
+            resume() { this.state.isPaused = false; this.saveState(); }
+            saveNotes(text) { this.state.notes = text; this.saveState(); }
+        }
+
+        const app = new RallyApp();
+        const container = document.getElementById('app');
 
         function render() {
             if (app.state.isPaused) {
-                appContainer.innerHTML = `
+                container.innerHTML = `
                     <div style="padding: 40px; text-align: center; background: #fff3cd;">
                         <h2>⏸️ PAUSE AKTIV</h2>
-                        <p>Das Spiel ist pausiert. Die Zeit steht still.</p>
+                        <p>Das Spiel ist pausiert. Die Zeit steht still und Aufgaben sind gesperrt.</p>
                         <button id="resume-btn" style="background: #2a9d8f; color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 8px; cursor: pointer; margin-top: 20px;">Pause beenden</button>
                     </div>
                 `;
-                document.getElementById('resume-btn').onclick = () => {
-                    app.resumeGame();
-                    render();
-                };
+                document.getElementById('resume-btn').onclick = () => { app.resume(); render(); };
                 return;
             }
 
-            if (app.state.status === GAME_CONFIG.gameStates.NOT_STARTED) {
-                appContainer.innerHTML = `
+            if (app.state.status === "NOT_STARTED") {
+                container.innerHTML = `
                     <div style="padding: 30px;">
-                        <h2 style="color: #1b4332;">Stadtrallye Bürgerfest 2027</h2>
-                        <p style="color: #6c757d;">Auerbach in der Oberpfalz</p>
+                        <h2 style="color: #1b4332; margin-top: 0;">Stadtrallye Bürgerfest 2027</h2>
+                        <p style="color: #6c757d; margin-bottom: 25px;">Auerbach in der Oberpfalz</p>
                         
                         <div style="margin-bottom: 20px;">
                             <label style="display: block; font-weight: bold; margin-bottom: 8px;">Wie heißt euer Team?</label>
-                            <input type="text" id="team-name-input" placeholder="z. B. Die Stadtfüchse" style="width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 8px; font-size: 16px; box-sizing: border-box;">
+                            <input type="text" id="team-input" placeholder="z. B. Die Stadtfüchse" style="width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 8px; font-size: 16px; box-sizing: border-box;">
                         </div>
 
                         <div style="margin-bottom: 25px;">
                             <label style="display: block; font-weight: bold; margin-bottom: 8px;">Vornamen der Teammitglieder (durch Komma getrennt):</label>
-                            <input type="text" id="member-names-input" placeholder="z. B. Anna, Lukas, Ben" style="width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 8px; font-size: 16px; box-sizing: border-box;">
+                            <input type="text" id="members-input" placeholder="z. B. Anna, Lukas, Ben" style="width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 8px; font-size: 16px; box-sizing: border-box;">
                         </div>
 
                         <button id="start-btn" style="width: 100%; background: #1b4332; color: white; border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer;">Rallye starten 🚀</button>
                     </div>
                 `;
-
                 document.getElementById('start-btn').onclick = () => {
-                    const teamName = document.getElementById('team-name-input').value;
-                    const members = document.getElementById('member-names-input').value;
-                    if (app.registerTeam(teamName, members)) {
-                        render();
-                    } else {
-                        alert("Bitte gebt einen gültigen Teamnamen ein!");
-                    }
+                    const tName = document.getElementById('team-input').value;
+                    const mNames = document.getElementById('members-input').value;
+                    if (app.registerTeam(tName, mNames)) { render(); } else { alert("Bitte Teamnamen eingeben!"); }
                 };
             } else {
-                const currentStation = app.getCurrentAssignedStation();
-                
-                appContainer.innerHTML = `
+                const current = app.getCurrentStation();
+                container.innerHTML = `
                     <div style="padding: 15px 20px; background: #1b4332; color: white; display: flex; justify-content: space-between; align-items: center;">
                         <div><strong>Team:</strong> ${app.state.teamName}</div>
                         <div><strong>Punkte:</strong> ${app.state.points}</div>
@@ -73,14 +145,13 @@
                     
                     <div style="padding: 25px;">
                         <span style="background: #e9ecef; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #495057;">AKTUELLE STATION</span>
-                        <h3 style="margin-top: 10px; font-size: 22px; color: #2d6a4f;">${currentStation ? currentStation.name : 'Finale erreicht!'}</h3>
-                        <p style="color: #495057; line-height: 1.5;">${currentStation ? currentStation.description : 'Ihr habt alle Stationen erfolgreich gemeistert!'}</p>
+                        <h3 style="margin-top: 10px; font-size: 22px; color: #2d6a4f;">${current ? current.name : '🎉 Finale erreicht!'}</h3>
+                        <p style="color: #495057; line-height: 1.5;">${current ? current.description : 'Ihr habt alle Stationen der geheimen Route erfolgreich gemeistert und die Botschaft der Vergangenheit entschlüsselt!'}</p>
                         
-                        ${currentStation ? `
+                        ${current ? `
                             <div style="margin-top: 30px; background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6;">
                                 <h4 style="margin-top: 0; color: #1b4332;">Aufgabe lösen:</h4>
-                                <p style="font-size: 14px; color: #6c757d;">Gebt hier eure Lösung ein oder simuliert das Lösen der Station für den Test:</p>
-                                <button id="solve-test-btn" style="background: #2a9d8f; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer;">Station testweise abschließen ✅</button>
+                                <button id="solve-btn" style="background: #2a9d8f; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px;">Station lösen & weiter ✅</button>
                             </div>
                         ` : ''}
                     </div>
@@ -91,39 +162,26 @@
                     </div>
                 `;
 
-                document.getElementById('pause-btn').onclick = () => {
-                    app.pauseGame();
-                    render();
-                };
-
+                document.getElementById('pause-btn').onclick = () => { app.pause(); render(); };
+                
                 document.getElementById('notes-btn').onclick = () => {
-                    const existingNotes = app.state.notes || "";
-                    appContainer.innerHTML = `
+                    container.innerHTML = `
                         <div style="padding: 25px;">
                             <h3>Team-Notizen</h3>
-                            <p style="font-size: 14px; color: #6c757d; margin-bottom: 12px;">Hier könnt ihr Gedanken und Hinweise festhalten.</p>
-                            <textarea id="notes-textarea" style="width: 100%; height: 180px; padding: 12px; border: 1px solid #ced4da; border-radius: 8px; font-size: 16px; box-sizing: border-box; margin-bottom: 16px;">${existingNotes}</textarea>
+                            <textarea id="notes-ta" style="width: 100%; height: 180px; padding: 12px; border: 1px solid #ced4da; border-radius: 8px; font-size: 16px; box-sizing: border-box; margin-bottom: 16px;">${app.state.notes || ""}</textarea>
                             <div style="display: flex; gap: 12px;">
-                                <button id="save-notes" style="flex: 1; background: #2a9d8f; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">Speichern</button>
-                                <button id="cancel-notes" style="flex: 1; background: #e63946; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">Abbrechen</button>
+                                <button id="save-n" style="flex: 1; background: #2a9d8f; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">Speichern</button>
+                                <button id="cancel-n" style="flex: 1; background: #e63946; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">Abbrechen</button>
                             </div>
                         </div>
                     `;
-                    document.getElementById('save-notes').onclick = () => {
-                        app.saveNotes(document.getElementById('notes-textarea').value);
-                        render();
-                    };
-                    document.getElementById('cancel-notes').onclick = () => {
-                        render();
-                    };
+                    document.getElementById('save-n').onclick = () => { app.saveNotes(document.getElementById('notes-ta').value); render(); };
+                    document.getElementById('cancel-n').onclick = () => { render(); };
                 };
 
-                const solveBtn = document.getElementById('solve-test-btn');
-                if (solveBtn) {
-                    solveBtn.onclick = () => {
-                        app.completeCurrentStation();
-                        render();
-                    };
+                const sBtn = document.getElementById('solve-btn');
+                if (sBtn) {
+                    sBtn.onclick = () => { app.completeStation(); render(); };
                 }
             }
         }
