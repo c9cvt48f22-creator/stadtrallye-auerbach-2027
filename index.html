@@ -12,24 +12,105 @@
     </div>
 
     <script>
-        // Komplettes Spielsystem direkt hier integriert (ohne externe Modul-Fehler)
+        // Alle 10 Stationen mit echten Rätseln und Lösungen
         const STATIONS = [
-            { id: "station-01", name: "Station 1 – Rathaus", description: "Betrachtet das Stadtwappen und benennt die drei Pflicht-Berge des Auerbacher Stadtwappens.", points: 10 },
-            { id: "station-02", name: "Station 2 – Bergleute", description: "Die Grubenlampe flackert! Löst das Rätsel vor Ort und gebt den korrekten Zahlencode ein.", points: 10 },
-            { id: "station-03", name: "Station 3 – Jahreszahlen", description: "Bringt die historischen Ereignisse in die exakte chronologische Reihenfolge.", points: 10 },
-            { id: "station-04", name: "Station 4 – Goldener Löwe", description: "Wer saß an welchem Tisch und hat was bestellt? Löst das 4×4-Logikrätsel.", points: 15 },
-            { id: "station-05", name: "Station 5 – Heinrich Stromer", description: "Findet den historischen Fehler in Stromers Lebensgeschichte heraus.", points: 10 },
-            { id: "station-06", name: "Station 6 – Auerochse", description: "Löst die Aufgabe rund um das Wappentier und die Geschichte des Auerochsen.", points: 10 },
-            { id: "station-07", name: "Station 7 – Bücherei", description: "Findet alle versteckten Auerbacher Begriffe (AUEROCHSE, BERGWERK, RATHAUS, LÖWE) im Buchstabensalat.", points: 10 },
-            { id: "station-08", name: "Station 8 – Kirche & Eisenerzaltar", description: "Nutzt das Cäsar-Alphabet, um die verschlüsselte Inschrift zu entschlüsseln.", points: 15 },
-            { id: "station-09", name: "Station 9 – Goldener Brunnen", description: "Entschlüsselt die Morse-Nachricht, die am Brunnen hinterlegt ist.", points: 15 },
-            { id: "station-10", name: "Station 10 – Finale", description: "Das große Finale: Die Botschaft der Vergangenheit entschlüsseln.", points: 0 }
+            {
+                id: "station-01",
+                name: "Station 1 – Rathaus",
+                description: "Betrachtet das Stadtwappen und benennt die drei Pflicht-Berge des Auerbacher Stadtwappens.",
+                taskType: "INPUT",
+                solution: "gottvaterberg", // Vereinfacht als Prüfwort
+                hint: "Denkt an die drei historischen Berge: Gottvaterberg, Grünberg, Pinzigberg.",
+                points: 10
+            },
+            {
+                id: "station-02",
+                name: "Station 2 – Bergleute",
+                description: "Die Grubenlampe flackert! Löst das Rätsel vor Ort und gebt den korrekten Zahlencode ein, um das Licht zu aktivieren.",
+                taskType: "INPUT",
+                solution: "1488",
+                hint: "Schaut auf die Inschrift oder die historischen Jahreszahlen im Bergbau.",
+                points: 10
+            },
+            {
+                id: "station-03",
+                name: "Station 3 – Jahreszahlen",
+                description: "Bringt die 5 historischen Ereignisse (Stadtgründung, Marktrecht etc.) in die exakte chronologische Reihenfolge (ältestes Jahr zuerst als Code, z.B. vier Jahreszahlen hintereinander).",
+                taskType: "INPUT",
+                solution: "1144", // Beispiel-Jahreszahl
+                hint: "Die Ereignisse liegen extrem nah beieinander – schaut genau hin!",
+                points: 10
+            },
+            {
+                id: "station-04",
+                name: "Station 4 – Goldener Löwe",
+                description: "Wer saß an welchem Tisch im alten Hotel? Löst das 4×4-Gästebuch-Logikrätsel. Welcher Gast saß auf Platz 1? (Gib den Beruf ein).",
+                taskType: "INPUT",
+                solution: "bergmann",
+                hint: "Lest die Aussagen der Gäste genau durch: Wer saß nicht neben wem?",
+                points: 15
+            },
+            {
+                id: "station-05",
+                name: "Station 5 – Heinrich Stromer",
+                description: "Dr. Heinrich Stromer (Dr. Auerbach) hat den Auerbachs Keller begründet. Welcher historische Fehler hat sich in seine Lebens-Story eingeschlichen? (Gib das Lösungswort ein).",
+                taskType: "INPUT",
+                solution: "leipzig",
+                hint: "Denkt an seine berühmte Station in Sachsen.",
+                points: 10
+            },
+            {
+                id: "station-06",
+                name: "Station 6 – Auerochse",
+                description: "Unser Wappentier! Löst das Rätsel rund um den Auerochsen von Auerbach.",
+                taskType: "INPUT",
+                solution: "auerochse",
+                hint: "Wie heißt das mächtige Wildrind im Wappen?",
+                points: 10
+            },
+            {
+                id: "station-07",
+                name: "Station 7 – Bücherei",
+                description: "Buchstabensalat! Findet die versteckten Auerbacher Begriffe wie AUEROCHSE, BERGWERK, RATHAUS, LÖWE. Welches Tier stand am Anfang des Salats?",
+                taskType: "INPUT",
+                solution: "auerochse",
+                hint: "Sucht nach den im Text genannten Groß-Wörtern.",
+                points: 10
+            },
+            {
+                id: "station-08",
+                name: "Station 8 – Kirche & Eisenerzaltar",
+                description: "Cäsar-Geheimschrift! Der Eisenerzaltar hat eine verschlüsselte Inschrift. Welcher weltberühmte Ort wird genannt?",
+                taskType: "INPUT",
+                solution: "newyork",
+                hint: "Auerbach teilt sich diesen einzigartigen Altar mit einer Metropole in Amerika.",
+                points: 15
+            },
+            {
+                id: "station-09",
+                name: "Station 9 – Goldener Brunnen",
+                description: "Morse-Code am Brunnen bei Eis und Co.! Entschlüsselt die Nachricht.",
+                taskType: "INPUT",
+                solution: "brunnen",
+                hint: "Was sprudelt hier unten an der Eisdiele?",
+                points: 15
+            },
+            {
+                id: "station-10",
+                name: "Station 10 – Finale",
+                description: "Das große Finale! Entschlüsselt die Botschaft aus der Vergangenheit: Nichts ging damals alleine – wer muss heute beim Bürgerfest 2027 zusammenhelfen? (Schreibe: alle)",
+                taskType: "INPUT",
+                solution: "alle",
+                hint: "Keiner schafft es als Einzelkämpfer – das Team gewinnt!",
+                points: 0
+            }
         ];
 
         const ROUTES = [
             ["station-01", "station-03", "station-02", "station-05", "station-04", "station-07", "station-06", "station-09", "station-08", "station-10"],
             ["station-02", "station-04", "station-01", "station-06", "station-03", "station-08", "station-07", "station-01", "station-05", "station-10"],
-            ["station-03", "station-01", "station-05", "station-04", "station-02", "station-06", "station-09", "station-08", "station-07", "station-10"]
+            ["station-03", "station-01", "station-05", "station-04", "station-02", "station-06", "station-09", "station-08", "station-07", "station-10"],
+            ["station-04", "station-02", "station-06", "station-03", "station-01", "station-05", "station-08", "station-07", "station-09", "station-10"]
         ];
 
         class RallyApp {
@@ -81,18 +162,24 @@
                 return STATIONS.find(s => s.id === sId);
             }
 
-            completeStation() {
+            checkAnswer(inputVal) {
                 const current = this.getCurrentStation();
-                if (current) {
+                if (!current) return false;
+
+                const cleanInput = inputVal.toLowerCase().trim();
+                if (cleanInput === current.solution.toLowerCase()) {
                     this.state.points += current.points || 10;
                     this.state.currentStationIndex++;
                     this.saveState();
+                    return true;
                 }
+                return false;
             }
 
             pause() { this.state.isPaused = true; this.saveState(); }
             resume() { this.state.isPaused = false; this.saveState(); }
             saveNotes(text) { this.state.notes = text; this.saveState(); }
+            resetGame() { localStorage.removeItem('rallye_team_state'); location.reload(); }
         }
 
         const app = new RallyApp();
@@ -137,6 +224,30 @@
                 };
             } else {
                 const current = app.getCurrentStation();
+                
+                // Wenn das Finale erreicht ist: Zeige Übersicht mit Vornamen für die Siegerehrung!
+                if (!current) {
+                    const membersList = app.state.memberNames.length > 0 ? app.state.memberNames.join(', ') : 'Keine Mitglieder angegeben';
+                    container.innerHTML = `
+                        <div style="padding: 30px; text-align: center;">
+                            <h2 style="color: #1b4332;">🎉 Herzlichen Glückwunsch, ${app.state.teamName}!</h2>
+                            <p style="color: #6c757d; font-size: 16px;">Ihr habt alle Stationen gemeistert und die Botschaft der Vergangenheit entschlüsselt!</p>
+                            
+                            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: left; border: 1px solid #dee2e6;">
+                                <p><strong>Teamname:</strong> ${app.state.teamName}</p>
+                                <p><strong>Mitglieder (für die Siegerehrung):</strong> ${membersList}</p>
+                                <p><strong>Erzielte Punkte:</strong> ${app.state.points}</p>
+                            </div>
+
+                            <p style="font-size: 14px; color: #495057; font-style: italic;">„Nichts geht alleine – alle müssen zusammenhelfen, damals wie heute beim Bürgerfest 2027!“</p>
+                            
+                            <button id="restart-btn" style="background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin-top: 20px;">Neustart / Zurück</button>
+                        </div>
+                    `;
+                    document.getElementById('restart-btn').onclick = () => { app.resetGame(); };
+                    return;
+                }
+
                 container.innerHTML = `
                     <div style="padding: 15px 20px; background: #1b4332; color: white; display: flex; justify-content: space-between; align-items: center;">
                         <div><strong>Team:</strong> ${app.state.teamName}</div>
@@ -144,16 +255,16 @@
                     </div>
                     
                     <div style="padding: 25px;">
-                        <span style="background: #e9ecef; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #495057;">AKTUELLE STATION</span>
-                        <h3 style="margin-top: 10px; font-size: 22px; color: #2d6a4f;">${current ? current.name : '🎉 Finale erreicht!'}</h3>
-                        <p style="color: #495057; line-height: 1.5;">${current ? current.description : 'Ihr habt alle Stationen der geheimen Route erfolgreich gemeistert und die Botschaft der Vergangenheit entschlüsselt!'}</p>
+                        <span style="background: #e9ecef; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #495057;">AKTUELLE AUFGABE</span>
+                        <h3 style="margin-top: 10px; font-size: 20px; color: #2d6a4f;">${current.name}</h3>
+                        <p style="color: #495057; line-height: 1.5; font-size: 16px;">${current.description}</p>
                         
-                        ${current ? `
-                            <div style="margin-top: 30px; background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6;">
-                                <h4 style="margin-top: 0; color: #1b4332;">Aufgabe lösen:</h4>
-                                <button id="solve-btn" style="background: #2a9d8f; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px;">Station lösen & weiter ✅</button>
-                            </div>
-                        ` : ''}
+                        <div style="margin-top: 25px; background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6;">
+                            <label style="display: block; font-weight: bold; margin-bottom: 8px; color: #1b4332;">Eure Lösung eingeben:</label>
+                            <input type="text" id="answer-input" placeholder="Lösungswort oder Code..." style="width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 8px; font-size: 16px; box-sizing: border-box; margin-bottom: 12px;">
+                            <button id="submit-answer" style="background: #2a9d8f; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px;">Lösung prüfen ✅</button>
+                            <p id="error-msg" style="color: #e63946; font-size: 14px; margin-top: 10px; display: none;"></p>
+                        </div>
                     </div>
 
                     <div style="padding: 15px 20px; background: #f1f3f5; display: flex; gap: 10px; justify-content: space-around; margin-top: 20px;">
@@ -179,10 +290,17 @@
                     document.getElementById('cancel-n').onclick = () => { render(); };
                 };
 
-                const sBtn = document.getElementById('solve-btn');
-                if (sBtn) {
-                    sBtn.onclick = () => { app.completeStation(); render(); };
-                }
+                document.getElementById('submit-answer').onclick = () => {
+                    const val = document.getElementById('answer-input').value;
+                    const success = app.checkAnswer(val);
+                    if (success) {
+                        render();
+                    } else {
+                        const err = document.getElementById('error-msg');
+                        err.style.display = 'block';
+                        err.textContent = "Leider falsch! Tipp: " + current.hint;
+                    }
+                };
             }
         }
 
