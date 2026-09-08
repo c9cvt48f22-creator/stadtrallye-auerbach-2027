@@ -14,7 +14,7 @@
     <script>
         /* =========================================================================
          * 🗄️ ZENTRALE DATENBANK & TEXTVERWALTUNG
-         * Hier kannst du alle Texte, Bilder, Aufgaben, Hinweise und Lösungen anpassen!
+         * Hier kannst du alle Texte, Aufgaben, Hinweise und Lösungen anpassen!
          * ========================================================================= */
         const GAME_DATABASE = {
             settings: {
@@ -27,12 +27,12 @@
                     name: "Station 1 – Rathaus & Wappen",
                     type: "PUZZLE_AND_TRIPLE_INPUT",
                     description: "Betrachtet das Auerbacher Stadtwappen. Setzt es im Kopf aus 12 Teilen zusammen und benennt anschließend die drei historischen Berge, auf denen der Auerochse steht!",
-                    // Hier ist das offizielle Wappen direkt in der Datenbank hinterlegt:
+                    // Offizieller, direkter Link zum Wappen (wird sofort zuverlässig angezeigt)
                     imageUrl: "https://upload.wikimedia.org/wikipedia/commons/4/4e/Wappen_von_Auerbach_in_der_Oberpfalz.png",
-                    solutions: ["grünberg", "gottvaterberg", "pinzigberg"], // Alle 3 Berge
+                    solutions: ["grünberg", "gottvaterberg", "pinzigberg"],
                     hints: [
                         "Hinweis 1: Die Namen der drei Berge beginnen mit den Buchstaben G, G und P.",
-                        "Hinweis 2: Einer der Berge hat einen göttlichen Namen, einer ist grün und der dritte heißt Pinzig..."
+                        "Hinweis 2: Schaut euch das Wappen genau an – die drei Kuppeln unten im Schild bilden diese Berge ab."
                     ],
                     points: 15
                 },
@@ -153,7 +153,7 @@
         };
 
         /* =========================================================================
-         * ⚙️ SPIellogik & STEUERUNG
+         * ⚙️ SPIEL-LOGIK (Hier musst du nichts ändern)
          * ========================================================================= */
         class RallyApp {
             constructor() {
@@ -336,12 +336,12 @@
                     hintsHtml += `</div>`;
                 }
 
-                // Bild anzeigen, falls in der Station definiert
+                // Bild anzeigen, falls imageUrl in der Station definiert ist
                 let imageHtml = "";
                 if (current.imageUrl) {
                     imageHtml = `
                         <div style="text-align: center; margin: 15px 0;">
-                            <img src="${current.imageUrl}" alt="Stadtwappen" style="max-width: 150px; height: auto; border: 1px solid #dee2e6; border-radius: 8px; padding: 5px; background: white;">
+                            <img src="${current.imageUrl}" alt="Wappen" style="max-width: 140px; height: auto; border: 1px solid #dee2e6; border-radius: 8px; padding: 5px; background: white;">
                         </div>
                     `;
                 }
@@ -359,9 +359,9 @@
                     taskBodyHtml = `
                         <div style="margin-bottom: 15px;">
                             <p style="font-weight: bold; color: #386641; margin-bottom: 8px;">Benennt die 3 historischen Berge auf dem Wappen:</p>
-                            <input type="text" id="ans-0" placeholder="1. Berg (Grün...)" style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 6px; margin-bottom: 8px; box-sizing: border-box;">
-                            <input type="text" id="ans-1" placeholder="2. Berg (Gottvater...)" style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 6px; margin-bottom: 8px; box-sizing: border-box;">
-                            <input type="text" id="ans-2" placeholder="3. Berg (Pinzig...)" style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 6px; margin-bottom: 15px; box-sizing: border-box;">
+                            <input type="text" id="ans-0" placeholder="1. Berg" style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 6px; margin-bottom: 8px; box-sizing: border-box;">
+                            <input type="text" id="ans-1" placeholder="2. Berg" style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 6px; margin-bottom: 8px; box-sizing: border-box;">
+                            <input type="text" id="ans-2" placeholder="3. Berg" style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 6px; margin-bottom: 15px; box-sizing: border-box;">
                             <button id="submit-answer" style="background: #2a9d8f; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px;">Antworten prüfen ✅</button>
                         </div>
                     `;
