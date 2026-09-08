@@ -19,10 +19,7 @@ class RallyApp {
                 routeStations: [],
                 currentStationIndex: 0,
                 completedStations: [],
-                skippedStations: [],
                 points: 0,
-                startTime: null,
-                elapsedSeconds: 0,
                 status: GAME_CONFIG.gameStates.NOT_STARTED,
                 notes: "",
                 isPaused: false
@@ -50,8 +47,8 @@ class RallyApp {
         this.state.routeStations = ROUTES[assignedKey];
         this.state.currentStationIndex = 0;
         this.state.status = GAME_CONFIG.gameStates.ACTIVE;
-        this.state.startTime = Date.now();
         this.state.points = 0;
+        this.state.completedStations = [];
 
         this.saveState();
         return true;
@@ -59,24 +56,18 @@ class RallyApp {
 
     getCurrentAssignedStation() {
         if (this.state.isPaused) return null;
+        if (this.state.currentStationIndex >= this.state.routeStations.length) return null;
         const stationId = this.state.routeStations[this.state.currentStationIndex];
         return STATIONS.find(s => s.id === stationId);
     }
 
-    verifyScannedQRCode(scannedIdentifier) {
-        if (this.state.isPaused) {
-            return { success: false, message: "Das Spiel ist zurzeit pausiert. Ihr könnt keine QR-Codes scannen!" };
-        }
-        const currentStation = this.getCurrentAssignedStation();
-        if (currentStation && currentStation.qrIdentifier === scannedIdentifier) {
-            this.state.status = GAME_CONFIG.gameStates.STATION_ACTIVE;
+    completeCurrentStation() {
+        const current = this.getCurrentAssignedStation();
+        if (current) {
+            this.state.points += current.points || 10;
+            this.state.completedStations.push(current.id);
+            this.state.currentStationIndex++;
             this.saveState();
-            return { success: true, station: currentStation };
-        } else {
-            return { 
-                success: false, 
-                message: "Ihr habt den falschen Ort gewählt. Überlegt noch einmal genau und schaut euch euren Hinweis an!" 
-            };
         }
     }
 
